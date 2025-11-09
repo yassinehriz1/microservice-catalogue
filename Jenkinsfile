@@ -35,7 +35,7 @@ pipeline {
         stage('3. Push Back-end') {
             steps {
                 script {
-                    def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
+                    def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-backend:${TAG_NAME}"
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
                         sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USER --password-stdin"
                         sh "docker push ${BACK_IMAGE}"
@@ -63,7 +63,7 @@ pipeline {
         stage('5. Push Front-end') {
             steps {
                 script {
-                    def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
+                    def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-frontend:${TAG_NAME}"
                     // Pas besoin de relogin, le token est encore actif, mais on utilise withCredentials pour la sécurité
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
                         sh "docker push ${FRONT_IMAGE}"
