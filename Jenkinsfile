@@ -52,7 +52,7 @@ pipeline {
         stage('4. Build Front-end') {
             steps {
                 script {
-                    def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
+                    def FRONT_IMAGE = "${DOCKER_USER_ID}/microservice-catalogue-frontend:${TAG_NAME}"
                     echo "Construction de l'image Front-end: ${FRONT_IMAGE}"
                     // Construit l'image en utilisant le Dockerfile dans le dossier 'front-code'
                     sh "docker build -t ${FRONT_IMAGE} ./microservice-frontend" 
@@ -63,7 +63,7 @@ pipeline {
         stage('5. Push Front-end') {
             steps {
                 script {
-                    def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
+                    def FRONT_IMAGE = "${DOCKER_USER_ID}/microservice-catalogue-frontend:${TAG_NAME}"
                     // Pas besoin de relogin, le token est encore actif, mais on utilise withCredentials pour la sécurité
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
                         sh "docker push ${FRONT_IMAGE}"
@@ -81,7 +81,7 @@ pipeline {
                 // Le bloc script autorise les déclarations de variables Groovy (def)
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
-                    def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
+                    def FRONT_IMAGE = "${DOCKER_USER_ID}/microservice-catalogue-frontend:${TAG_NAME}"
                     
                     // 1. Mise à jour du Déploiement du BACK-END
                     echo "Mise à jour de l'image Back-end dans le YAML..."
