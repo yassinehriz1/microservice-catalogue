@@ -78,21 +78,23 @@ pipeline {
         
         stage('6. Deploy Services to Kubernetes') {
             steps {
-                // Définition des chemins d'images finaux
-                def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
-                def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
-                
-                // 1. Mise à jour du Déploiement du BACK-END
-                echo "Mise à jour de l'image Back-end dans le YAML..."
-                sh "sed -i 's|image: .*catalogue-back:.*|image: ${BACK_IMAGE}|' ${K8S_MANIFESTS_PATH}/backend-deployment.yaml"
-                
-                // 2. Mise à jour du Déploiement du FRONT-END
-                echo "Mise à jour de l'image Front-end dans le YAML..."
-                sh "sed -i 's|image: .*catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml"
+                // Le bloc script autorise les déclarations de variables Groovy (def)
+                script {
+                    def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
+                    def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
+                    
+                    // 1. Mise à jour du Déploiement du BACK-END
+                    echo "Mise à jour de l'image Back-end dans le YAML..."
+                    sh "sed -i 's|image: .*catalogue-back:.*|image: ${BACK_IMAGE}|' ${K8S_MANIFESTS_PATH}/backend-deployment.yaml"
+                    
+                    // 2. Mise à jour du Déploiement du FRONT-END
+                    echo "Mise à jour de l'image Front-end dans le YAML..."
+                    sh "sed -i 's|image: .*catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml"
 
-                // 3. Application des manifestes (y compris la base de données qui ne change pas)
-                echo "Application des manifestes de tous les services avec kubectl..."
-                sh "kubectl apply -f ${K8S_MANIFESTS_PATH}/" 
+                    // 3. Application des manifestes (y compris la base de données qui ne change pas)
+                    echo "Application des manifestes de tous les services avec kubectl..."
+                    sh "kubectl apply -f ${K8S_MANIFESTS_PATH}/" 
+                } // Fin du bloc script
             }
         }
     }
