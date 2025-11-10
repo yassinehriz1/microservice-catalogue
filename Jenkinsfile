@@ -80,13 +80,13 @@ pipeline {
     steps {
         script {
             def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
-            def FRONT_IMAGE = "${DOCKER_USER_ID}/catalogue-front:${TAG_NAME}"
+            def FRONT_IMAGE = "${DOCKER_USER_ID}/image-catalogue-front:${TAG_NAME}"
 
             withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG_FILE')]) {
                 sh """
                     export KUBECONFIG=$KUBECONFIG_FILE
                     sed -i 's|image: .*catalogue-back:.*|image: ${BACK_IMAGE}|' ${K8S_MANIFESTS_PATH}/backend-deployment.yaml
-                    sed -i 's|image: .*catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml
+                    sed -i 's|image: .*image-catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml
                     kubectl apply -f ${K8S_MANIFESTS_PATH}/
                     kubectl get pods
                 """
