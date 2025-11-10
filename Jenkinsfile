@@ -80,22 +80,20 @@ pipeline {
         // ÉTAPE DE DÉPLOIEMENT CONSOLIDÉE
         // =================================================================
         
-         stage('6. Deploy Services to Kubernetes') {
-    steps {
-        script {
-            def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
-            def FRONT_IMAGE = "${DOCKER_USER_ID}/image-catalogue-front:${TAG_NAME}"
-
-            sh """
-                export KUBECONFIG=\$HOME/.kube/config
-                sed -i 's|image: .*catalogue-back:.*|image: ${BACK_IMAGE}|' ${K8S_MANIFESTS_PATH}/backend-deployment.yaml
-                sed -i 's|image: .*image-catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml
-                kubectl apply -f ${K8S_MANIFESTS_PATH}/
-                kubectl get pods
-            """
+        stage('Deploy Services to Kubernetes') {
+            steps {
+                script {
+                    // On utilise le kubeconfig copié dans le workspace
+                    sh '''
+                    export KUBECONFIG=$WORKSPACE/jenkins-kube/config
+                    sed -i 's|image: .*catalogue-back:.*|image: yassinehriz/catalogue-back:build-25|' k8s/backend-deployment.yaml
+                    sed -i 's|image: .*image-catalogue-front:.*|image: yassinehriz/image-catalogue-front:build-25|' k8s/frontend-deployment.yaml
+                    kubectl apply -f k8s/
+                    '''
+                }
+            }
         }
-    }
-}
+
 
     }
 }
