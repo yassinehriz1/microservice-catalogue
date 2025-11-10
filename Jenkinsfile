@@ -9,6 +9,7 @@ pipeline {
         TAG_NAME = "build-${BUILD_NUMBER}"
         DOCKER_CREDENTIAL_ID = "dockerhub-creds"
         K8S_MANIFESTS_PATH = "k8s"
+        KUBECONFIG = '/var/lib/jenkins/.minikube/config'
     }
 
     stages {
