@@ -6,7 +6,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Use a Node static server instead of nginx
+
 RUN npm install -g serve
 
 EXPOSE 3000
