@@ -78,23 +78,42 @@ pipeline {
         
         stage('6. Deploy Services to Kubernetes') {
             steps {
-                // Le bloc script autorise les déclarations de variables Groovy (def)
                 script {
-                    def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
-                    def FRONT_IMAGE = "${DOCKER_USER_ID}/microservice-catalogue-frontend:${TAG_NAME}"
+                    def TAG_NAME = env.BUILD_NUMBER
+                    def KUBECONFIG_TMP = "k8s/kubeconfig.tmp"
                     
-                    // 1. Mise à jour du Déploiement du BACK-END
+                    echo "Préparation des certificats Kubeconfig pour contourner les problèmes de permission..."
+                    
+                    // 1. Créer le dossier local de travail (dans le workspace Jenkins)
+                    sh "mkdir -p k8s/certs"
+                    
+                    // 2. Copier les certificats/clés sensibles
+                    // NOTE: Cette étape suppose que jenkins a le droit de LIRE (o+r) les fichiers sources, ce que vous avez déjà fait avec chmod.
+                    sh "cp /home/yassinehriz/.minikube/ca.crt k8s/certs/"
+                    sh "cp /home/yassinehriz/.minikube/profiles/minikube/client.crt k8s/certs/"
+                    sh "cp /home/yassinehriz/.minikube/profiles/minikube/client.key k8s/certs/"
+                    
+                    // 3. Créer le fichier kubeconfig temporaire et remplacer les chemins absolus
+                    sh """
+                        cp ~/.kube/config ${KUBECONFIG_TMP}
+                        
+                        sed -i 's|/home/yassinehriz/.minikube/ca.crt|k8s/certs/ca.crt|' ${KUBECONFIG_TMP}
+                        sed -i 's|/home/yassinehriz/.minikube/profiles/minikube/client.crt|k8s/certs/client.crt|' ${KUBECONFIG_TMP}
+                        sed -i 's|/home/yassinehriz/.minikube/profiles/minikube/client.key|k8s/certs/client.key|' ${KUBECONFIG_TMP}
+                    """
+                    
+                    // --- MISE À JOUR DES IMAGES ET DÉPLOIEMENT ---
+                    
                     echo "Mise à jour de l'image Back-end dans le YAML..."
-                    sh "sed -i 's|image: .*catalogue-back:.*|image: ${BACK_IMAGE}|' ${K8S_MANIFESTS_PATH}/backend-deployment.yaml"
+                    sh "sed -i 's|image: .*catalogue-back:.*|image: yassinehriz/catalogue-back:build-${TAG_NAME}|' k8s/backend-deployment.yaml"
                     
-                    // 2. Mise à jour du Déploiement du FRONT-END
                     echo "Mise à jour de l'image Front-end dans le YAML..."
-                    sh "sed -i 's|image: .*catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml"
-
-                    // 3. Application des manifestes (y compris la base de données qui ne change pas)
+                    sh "sed -i 's|image: .*catalogue-front:.*|image: yassinehriz/microservice-catalogue-frontend:build-${TAG_NAME}|' k8s/frontend-deployment.yaml"
+                    
                     echo "Application des manifestes de tous les services avec kubectl..."
-                    sh "kubectl apply -f ${K8S_MANIFESTS_PATH}/" 
-                } // Fin du bloc script
+                    // Utiliser le kubeconfig temporaire et le chemin d'accès au fichier
+                    sh "kubectl --kubeconfig=${KUBECONFIG_TMP} apply -f k8s/"
+                }
             }
         }
     }
