@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
 
     // --- Variables d'Environnement Globales ---
     environment {
@@ -10,7 +10,7 @@ pipeline {
     }
 
     stages {
-        
+        agent { label 'master' }
         stage('1. Checkout Code') {
             steps { echo 'Récupération du code source...' }
         }
@@ -83,6 +83,7 @@ pipeline {
         // =================================================================
         
         stage('6. Deploy to Kubernetes') {
+            agent { label 'master' }
             steps {
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
