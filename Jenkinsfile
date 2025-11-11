@@ -20,6 +20,7 @@ pipeline {
         // =================================================================
         
         stage('2. Build Back-end') {
+            agent { label 'docker' }
             steps {
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
@@ -32,6 +33,7 @@ pipeline {
         
         stage('3. Push Back-end') {
             steps {
+                agent { label 'docker' } 
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIAL_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
@@ -48,6 +50,7 @@ pipeline {
         // =================================================================
         
         stage('4. Build Front-end') {
+            agent { label 'docker' }
             steps {
                 script {
                     def FRONT_IMAGE = "${DOCKER_USER_ID}/image-catalogue-front:${TAG_NAME}"
@@ -59,6 +62,7 @@ pipeline {
         }
         
         stage('5. Push Front-end') {
+            agent { label 'docker' }
             steps {
                 script {
                     def FRONT_IMAGE = "${DOCKER_USER_ID}/image-catalogue-front:${TAG_NAME}"
@@ -96,7 +100,7 @@ pipeline {
                     """
                 }
             }
-        }
+    }
 
 
     }
