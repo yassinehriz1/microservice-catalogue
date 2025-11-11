@@ -11,7 +11,7 @@ pipeline {
     stages {
 
         stage('1. Checkout Code') {
-            agent { label 'master' } // ou le node principal
+            agent any// ou le node principal
             steps {
                 echo 'Récupération du code source...'
                 checkout scm
@@ -71,7 +71,7 @@ pipeline {
         }
 
         stage('6. Deploy to Kubernetes') {
-            agent { label 'master' } // node avec kubectl
+            agent any// node avec kubectl
             steps {
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
