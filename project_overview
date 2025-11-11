@@ -1,0 +1,36 @@
+catalogue-microservice/
+
+├── Jenkinsfile
+├── k8s/
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── frontend-deployment.yaml
+│   ├── frontend-service.yaml
+│   ├── mongodb-deployment.yaml
+│   ├── mongodb-service.yaml
+│ 
+├── microservice-backend/
+│   ├── Dockerfile
+│   ├── models/
+│   │   └── product.js
+│   ├── node_modules/
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── routes/
+│   │   └── productRoutes.js
+│   └── server.js
+└── microservice-frontend/
+    ├── Dockerfile
+    ├── node_modules/
+    ├── package.json
+    ├── package-lock.json
+    ├── public/
+    ├── README.md
+    └── src/
+        ├── App.css
+        ├── App.js
+        ├── components/
+        │   ├── MenuCard.js
+        │   └── MenuModal.js
+        ├── index.css
+        └── index.js
