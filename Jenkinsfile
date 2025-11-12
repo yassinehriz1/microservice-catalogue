@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
 
     environment {
         DOCKER_USER_ID = "yassinehriz"
@@ -11,7 +11,6 @@ pipeline {
     stages {
 
         stage('1. Checkout Code') {
-            agent any// ou le node principal
             steps {
                 echo 'Récupération du code source...'
                 checkout scm
@@ -19,7 +18,6 @@ pipeline {
         }
 
         stage('2. Build Back-end') {
-            agent { label 'docker' } // DinD agent
             steps {
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
@@ -30,7 +28,6 @@ pipeline {
         }
 
         stage('3. Push Back-end') {
-            agent { label 'docker' }
             steps {
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
@@ -44,7 +41,6 @@ pipeline {
         }
 
         stage('4. Build Front-end') {
-            agent { label 'docker' }
             steps {
                 script {
                     def FRONT_IMAGE = "${DOCKER_USER_ID}/image-catalogue-front:${TAG_NAME}"
@@ -55,7 +51,6 @@ pipeline {
         }
 
         stage('5. Push Front-end') {
-            agent { label 'docker' }
             steps {
                 script {
                     def FRONT_IMAGE = "${DOCKER_USER_ID}/image-catalogue-front:${TAG_NAME}"
@@ -71,7 +66,6 @@ pipeline {
         }
 
         stage('6. Deploy to Kubernetes') {
-            agent any// node avec kubectl
             steps {
                 script {
                     def BACK_IMAGE = "${DOCKER_USER_ID}/catalogue-back:${TAG_NAME}"
