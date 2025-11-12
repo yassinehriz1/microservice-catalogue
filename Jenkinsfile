@@ -10,12 +10,13 @@ pipeline {
 
     stages {
 
-        stage('1. Checkout Code') {
-            steps {
-                echo 'Récupération du code source...'
-                checkout scm
-            }
+    stage('Checkout Code') {
+        steps {
+            echo 'Récupération du code source depuis GitHub...'
+            checkout scm
         }
+    }
+
 
         stage('2. Build Back-end') {
             steps {
@@ -73,6 +74,7 @@ pipeline {
 
                     echo "Déploiement des services sur Kubernetes..."
                     sh """
+                        cat ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml
                         sed -i 's|image: .*catalogue-back:.*|image: ${BACK_IMAGE}|' ${K8S_MANIFESTS_PATH}/backend-deployment.yaml
                         sed -i 's|image: .*image-catalogue-front:.*|image: ${FRONT_IMAGE}|' ${K8S_MANIFESTS_PATH}/frontend-deployment.yaml
                         kubectl apply -f ${K8S_MANIFESTS_PATH}/
