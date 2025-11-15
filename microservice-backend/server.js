@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/products', productRoutes);
 
-mongoose.connect("mongodb://admin:pass@mongodb:27017")
+mongoose.connect("mongodb://admin:pass@mongo-service:27017")
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection failed:', err));
 
