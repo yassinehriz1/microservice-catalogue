@@ -1,4 +1,3 @@
- GNU nano 8.3                                                                                        Dockerfile                                                                                                   
 FROM node:latest AS build
 WORKDIR /app
 COPY package*.json ./
