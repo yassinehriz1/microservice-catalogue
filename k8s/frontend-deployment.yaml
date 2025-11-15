@@ -16,7 +16,7 @@ spec:
       spec:
        containers:
        - name: frontend-catalogue-container
-         image: yassinehriz/microservice-catalogue-frontend:v2
+         image: yassinehriz/image-catalogue-front:build-34
          ports:
          - containerPort: 3000
          env:
