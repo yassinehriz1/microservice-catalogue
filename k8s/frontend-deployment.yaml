@@ -18,7 +18,7 @@ spec:
        - name: frontend-catalogue-container
          image: yassinehriz/image-catalogue-front:build-34
          ports:
-         - containerPort: 3000
+         - containerPort: 80
          env:
           -  name: BACKEND_URI
              value: http://backend-service:5000/api/products
