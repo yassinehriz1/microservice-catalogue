@@ -16,7 +16,7 @@ function App() {
 useEffect(() => {
     const fetchMenus = async () => {
       try {
-        const response = await fetch("http://backend-service:5000/api/products");
+        const response = await fetch("http://catalogue.local/api");
 	console.log(process.env.BACKEND_URI)
         if (!response.ok) throw new Error('Erreur réseau');
         const data = await response.json();
